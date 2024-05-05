@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="VkNet" Version="1.78.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Welsh.Framebot.Domain\Welsh.Framebot.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
