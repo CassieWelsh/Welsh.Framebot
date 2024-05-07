@@ -15,12 +15,3 @@ public abstract class BotState(string name, List<BotAction> actions)
             await action.ExecuteAsync(message);
     }
 }
-
-public abstract class BotAction(string name, byte order)
-{
-    private readonly string _name = name;
-
-    public byte Order { get; } = order;
-
-    public abstract Task ExecuteAsync(BotMessage message);
-}
