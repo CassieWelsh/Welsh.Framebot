@@ -2,10 +2,10 @@
 
 namespace Welsh.Framebot.Domain;
 
-public class LongPollingService(IBotChannel channel, IBotStateContainer stateContainer) : ILongPollingService
+public class LongPollingService(IBotChannel channel, IBotMessageProcessor processor)
 {
     private readonly IBotChannel _channel = channel;
-    private readonly IBotStateContainer<byte> _stateContainer = stateContainer;
+    private readonly IBotMessageProcessor _processor = processor;
 
     public async Task PollAsync(CancellationToken ct)
     {
@@ -15,7 +15,7 @@ public class LongPollingService(IBotChannel channel, IBotStateContainer stateCon
             var messages = await _channel.FetchAsync(ct);
             foreach (var message in messages)
             {
-                var state = _stateContainer.GetState(message.UserId);
+                await _processor.ProcessMessageAsync(message, ct);
             }
         }
     }

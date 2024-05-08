@@ -2,11 +2,9 @@
 
 namespace Welsh.Framebot.Domain.Abstraction;
 
-public abstract class BotAction(string name, byte order)
+public abstract class BotAction(string name)
 {
     private readonly string _name = name;
 
-    public byte Order { get; } = order;
-
-    public abstract Task ExecuteAsync(BotMessage message);
+    public abstract Task<BotState> ExecuteAsync(BotMessage message);
 }
