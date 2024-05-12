@@ -2,9 +2,10 @@
 
 namespace Welsh.Framebot.Domain.Abstraction;
 
-public abstract class BotState(string name)
+public abstract class BotState(BotAction startAction)
 {
-    private readonly string _name = name;
+    private readonly BotAction _startAction = startAction ?? throw new ArgumentNullException(nameof(startAction));
 
-    public abstract Task<BotState> HandleAsync(BotMessage message, CancellationToken ct);
+    public virtual Task<(BotState? state, string? message)> HandleAsync(BotMessage message, CancellationToken ct)
+        => _startAction.ExecuteAsync(message, ct);
 }

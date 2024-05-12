@@ -9,7 +9,7 @@ public class MessageProcessor(IBotStateContainer<BotState> stateContainer, BotSt
     private readonly IBotStateContainer<BotState> _stateContainer = stateContainer;
     private readonly BotState _initialState = initialState;
 
-    public async Task ProcessMessageAsync(BotMessage message, CancellationToken ct)
+    public async Task<string?> ProcessMessageAsync(BotMessage message, CancellationToken ct)
     {
         var state = _stateContainer.GetState(message.UserId);
         if (state == null)
@@ -18,8 +18,11 @@ public class MessageProcessor(IBotStateContainer<BotState> stateContainer, BotSt
             _stateContainer.SetState(message.UserId, state);
         }
 
-        var newState = await state.HandleAsync(message, ct);
+        var (newState, replyMessage) = await state.HandleAsync(message, ct);
 
-        _stateContainer.SetState(message.UserId, newState);
+        if (newState != null)
+            _stateContainer.SetState(message.UserId, newState);
+
+        return replyMessage;
     }
 }
