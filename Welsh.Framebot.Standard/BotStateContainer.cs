@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Welsh.Framebot.Domain.Abstraction;
 
-namespace Welsh.Framebot.Domain;
+namespace Welsh.Framebot.Standard;
 
 public class BotStateContainer<T> : IBotStateContainer<T> where T : class
 {

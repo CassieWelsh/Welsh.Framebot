@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Welsh.Framebot.Domain.Abstraction;
 
-namespace Welsh.Framebot.Domain;
+namespace Welsh.Framebot.Standard;
 
 public class LongPollingService(IBotChannel channel, IBotMessageProcessor processor, ILogger<LongPollingService> logger)
 {

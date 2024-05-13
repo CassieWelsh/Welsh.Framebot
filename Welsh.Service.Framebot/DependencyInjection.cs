@@ -1,6 +1,6 @@
-﻿using Welsh.Framebot.Domain;
-using Welsh.Framebot.Domain.Abstraction;
-using Welsh.Framebot.Domain.Actions;
+﻿using Welsh.Framebot.Domain.Abstraction;
+using Welsh.Framebot.Standard;
+using Welsh.Framebot.Standard.Actions;
 
 namespace Welsh.Service.Framebot;
 

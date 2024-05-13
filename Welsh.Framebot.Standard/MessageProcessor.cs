@@ -1,7 +1,7 @@
 ﻿using Welsh.Framebot.Domain.Abstraction;
 using Welsh.Framebot.Domain.Model;
 
-namespace Welsh.Framebot.Domain;
+namespace Welsh.Framebot.Standard;
 
 public class MessageProcessor(IBotStateContainer<BotState> stateContainer, BotState initialState)
     : IBotMessageProcessor

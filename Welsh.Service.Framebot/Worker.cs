@@ -1,4 +1,4 @@
-using Welsh.Framebot.Domain;
+using Welsh.Framebot.Standard;
 
 namespace Welsh.Service.Framebot;
 

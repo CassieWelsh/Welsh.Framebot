@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Welsh.Framebot.Standard\Welsh.Framebot.Standard.csproj" />
     <ProjectReference Include="..\Welsh.Framebot.VkInfrastructure\Welsh.Framebot.VkInfrastructure.csproj" />
   </ItemGroup>
 </Project>
