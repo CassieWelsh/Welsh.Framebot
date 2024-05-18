@@ -3,8 +3,22 @@ using Welsh.Framebot.Data.Models;
 
 namespace Welsh.Framebot.Data;
 
-public class FramebotContext(DbContextOptions<FramebotContext> options) : DbContext(options)
+public class FramebotContext : DbContext
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    //UNCOMMENT FOR MIGRATIONS
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    optionsBuilder.UseSqlite("Data Source=c:\\mydb.db;Version=3;");
+    //}
+
+    //public FramebotContext() { }
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public FramebotContext(DbContextOptions<FramebotContext> options) : base(options)
+    {
+    }
+
     #region DbSets
 
     public virtual DbSet<User> Users { get; set; }
@@ -81,6 +95,11 @@ public class FramebotContext(DbContextOptions<FramebotContext> options) : DbCont
             e.HasOne(ap => ap.Param)
              .WithMany()
              .HasForeignKey(ap => ap.ParamTypeId);
+        });
+
+        modelBuilder.Entity<BotActionTypeParam>(e =>
+        {
+            e.HasKey(e => e.ParamTypeId);
         });
 
         base.OnModelCreating(modelBuilder);

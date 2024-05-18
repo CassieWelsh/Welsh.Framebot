@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Welsh.Framebot.Data\Welsh.Framebot.Data.csproj" />
     <ProjectReference Include="..\Welsh.Service.Framebot\Welsh.Service.Framebot.csproj" />
   </ItemGroup>
 

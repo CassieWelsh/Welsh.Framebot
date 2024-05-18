@@ -2,7 +2,7 @@
 
 public class BotActionType
 {
-    public int ActionTypeId { get; set; }
+    public short ActionTypeId { get; set; }
     public string Name { get; set; }
 
     public List<BotStateAction> Actions { get; set; } = [];
