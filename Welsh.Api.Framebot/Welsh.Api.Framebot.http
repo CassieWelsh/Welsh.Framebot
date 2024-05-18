@@ -1,0 +1,6 @@
+@Welsh.Api.Framebot_HostAddress = http://localhost:5271
+
+GET {{Welsh.Api.Framebot_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Welsh.Framebot.Domain\Welsh.Framebot.Domain.csproj" />
+    <ProjectReference Include="..\Welsh.Framebot.Standard\Welsh.Framebot.Standard.csproj" />
   </ItemGroup>
 
 </Project>

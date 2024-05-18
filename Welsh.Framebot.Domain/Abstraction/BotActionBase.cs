@@ -2,15 +2,13 @@
 
 namespace Welsh.Framebot.Domain.Abstraction;
 
-public abstract class BotAction
+public abstract class BotActionBase
 {
-    private readonly string _name;
-    private readonly BotAction? _nextAction;
-    private readonly BotState? _nextState;
+    protected readonly BotState? _nextState;
+    protected readonly BotActionBase? _nextAction;
 
-    public BotAction(string name, BotAction? nextAction, BotState? nextState)
+    public BotActionBase(BotActionBase? nextAction, BotState? nextState)
     {
-        _name = name;
         _nextAction = nextAction;
         _nextState = nextState;
     }

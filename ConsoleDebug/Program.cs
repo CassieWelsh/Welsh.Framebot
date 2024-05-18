@@ -1,14 +1,35 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Welsh.Framebot.Domain.Abstraction;
-using Welsh.Framebot.VkInfrastructure;
+﻿//var services = new ServiceCollection();
+//var configuration = new ConfigurationBuilder()
+//    .AddJsonFile("appsettings.json")
+//    .Build();
 
-var services = new ServiceCollection();
-services.AddVkInfrastructure();
+//services.AddVkInfrastructure(configuration);
+//services.AddCoreServices();
 
-using var serviceProvider = services.BuildServiceProvider();
-using var scope = serviceProvider.CreateScope();
+//using var serviceProvider = services.BuildServiceProvider();
+//using var scope = serviceProvider.CreateScope();
 
-var channel = scope.ServiceProvider.GetRequiredService<IBotChannel>();
+using System.Diagnostics;
 
-await channel.FetchAsync(default);
+var p = new ProcessStartInfo()
+{
+    FileName = "C:\\Users\\maksi\\Desktop\\Repos\\Welsh.Framebot\\Welsh.Service.Framebot\\bin\\Debug\\net8.0\\Welsh.Service.Framebot.exe",
+    RedirectStandardOutput = true,
+    RedirectStandardError = true,
+    UseShellExecute = false,
+    CreateNoWindow = true
+};
+
+var process = new Process() { StartInfo = p };
+process.Start();
+
+var process2 = new Process() { StartInfo = p };
+process2.Start();
+
+await Task.Delay(20000);
+
+process.Kill();
+process2.Kill();
+
+
 
