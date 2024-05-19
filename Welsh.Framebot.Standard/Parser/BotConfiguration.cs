@@ -16,6 +16,7 @@ public class State
 public class Action
 {
     public int Id { get; set; }
+    public short TypeId { get; set; }
     public string Name { get; set; } = string.Empty;
     public int Next { get; set; }
     public List<NextAction>? NextActions { get; set; }

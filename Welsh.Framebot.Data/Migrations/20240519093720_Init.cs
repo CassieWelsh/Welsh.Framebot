@@ -118,7 +118,9 @@ namespace Welsh.Framebot.Data.Migrations
                     ActionId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     StateId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ActionTypeId = table.Column<short>(type: "INTEGER", nullable: false)
+                    ActionTypeId = table.Column<short>(type: "INTEGER", nullable: false),
+                    NextActionId = table.Column<int>(type: "INTEGER", nullable: true),
+                    NextState = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -13,7 +13,7 @@ var configuration = new ConfigurationBuilder()
 
 services.AddVkInfrastructure(configuration);
 services.AddCoreServices(configuration, ChannelTypes.Vk);
-services.AddDbContext<FramebotContext>(c => c.UseSqlite("Data Source=mydb.db"));
+services.AddDbContext<FramebotContext>(c => c.UseSqlite(@"Data Source=C:\Users\maksi\Desktop\FramebotDB.db"));
 
 using var serviceProvider = services.BuildServiceProvider();
 using var scope = serviceProvider.CreateScope();

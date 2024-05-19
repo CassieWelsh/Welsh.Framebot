@@ -116,6 +116,12 @@ namespace Welsh.Framebot.Data.Migrations
                     b.Property<short>("ActionTypeId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("NextActionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("NextState")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("StateId")
                         .HasColumnType("INTEGER");
 

@@ -6,6 +6,9 @@ public class BotStateAction
     public int StateId { get; set; }
     public short ActionTypeId { get; set; }
 
+    public int? NextActionId { get; set; }
+    public int? NextState { get; set; }
+
     public BotState State { get; set; }
     public BotActionType ActionType { get; set; }
     public List<BotStateActionParam> Params { get; set; } = [];

@@ -11,7 +11,7 @@ using Welsh.Framebot.Data;
 namespace Welsh.Framebot.Data.Migrations
 {
     [DbContext(typeof(FramebotContext))]
-    [Migration("20240518214509_Init")]
+    [Migration("20240519093720_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -117,6 +117,12 @@ namespace Welsh.Framebot.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<short>("ActionTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("NextActionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("NextState")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("StateId")
