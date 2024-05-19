@@ -25,21 +25,20 @@ public class FramebotContext : DbContext
     public virtual DbSet<Bot> Bots { get; set; }
     public virtual DbSet<BotChannel> BotChannels { get; set; }
     public virtual DbSet<BotState> States { get; set; }
-    public virtual DbSet<BotStateAction> StateActions { get; set; }
-    public virtual DbSet<BotActionType> ActionTypes { get; set; }
-    public virtual DbSet<BotActionTypeParam> ActionTypeParams { get; set; }
-    public virtual DbSet<BotStateActionParam> StateActionParams { get; set; }
+    public virtual DbSet<BotStateType> StateTypes { get; set; }
+    public virtual DbSet<BotStateParamValue> StateParamValues { get; set; }
+    public virtual DbSet<BotStateParam> StateParams { get; set; }
 
     #endregion
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.Entity<User>(e =>
+        builder.Entity<User>(e =>
         {
             e.HasKey(u => u.UserId);
         });
 
-        modelBuilder.Entity<Bot>(e =>
+        builder.Entity<Bot>(e =>
         {
             e.HasKey(b => b.BotId);
 
@@ -48,7 +47,7 @@ public class FramebotContext : DbContext
              .HasForeignKey(b => b.UserId);
         });
 
-        modelBuilder.Entity<BotChannel>(e =>
+        builder.Entity<BotChannel>(e =>
         {
             e.HasKey(c => new { c.BotId, c.ChannelType });
 
@@ -57,51 +56,44 @@ public class FramebotContext : DbContext
              .HasForeignKey(c => c.BotId);
         });
 
-        modelBuilder.Entity<BotState>(e =>
+        builder.Entity<BotState>(e =>
         {
             e.HasKey(s => s.StateId);
 
             e.HasOne(s => s.Bot)
              .WithMany(b => b.States)
              .HasForeignKey(s => s.BotId);
+
+            e.HasOne(s => s.StateType)
+             .WithMany(s => s.States)
+             .HasForeignKey(s => s.StateTypeId);
         });
 
-        modelBuilder.Entity<BotStateAction>(e =>
+        builder.Entity<BotStateType>(e =>
         {
-            e.HasKey(a => a.ActionId);
-
-            e.HasOne(a => a.State)
-             .WithMany(b => b.Actions)
-             .HasForeignKey(a => a.StateId);
-
-            e.HasOne(a => a.ActionType)
-             .WithMany(at => at.Actions)
-             .HasForeignKey(a => a.ActionTypeId);
+            e.HasKey(st => st.StateTypeId);
         });
 
-        modelBuilder.Entity<BotActionType>(e =>
+        builder.Entity<BotStateParamValue>(e =>
         {
-            e.HasKey(at => at.ActionTypeId);
-        });
+            e.HasKey(v => new { v.StateId, v.ParamId });
 
-        modelBuilder.Entity<BotStateActionParam>(e =>
-        {
-            e.HasKey(ap => new { ap.ActionId, ap.ParamTypeId });
+            e.HasOne(v => v.State)
+             .WithMany(s => s.StateParamValues)
+             .HasForeignKey(v => v.StateId);
 
-            e.HasOne(ap => ap.Action)
-             .WithMany(a => a.Params)
-             .HasForeignKey(ap => ap.ActionId);
-
-            e.HasOne(ap => ap.Param)
+            e.HasOne(v => v.StateParam)
              .WithMany()
-             .HasForeignKey(ap => ap.ParamTypeId);
+             .HasForeignKey(v => v.ParamId);
         });
 
-        modelBuilder.Entity<BotActionTypeParam>(e =>
+        builder.Entity<BotStateParam>(e =>
         {
-            e.HasKey(e => e.ParamTypeId);
-        });
+            e.HasKey(p => p.ParamId);
 
-        base.OnModelCreating(modelBuilder);
+            e.HasOne(p => p.StateType)
+             .WithMany(t => t.StateParams)
+             .HasForeignKey(p => p.StateTypeId);
+        });
     }
 }

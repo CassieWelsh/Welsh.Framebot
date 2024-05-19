@@ -11,30 +11,16 @@ namespace Welsh.Framebot.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ActionTypeParams",
+                name: "StateTypes",
                 columns: table => new
                 {
-                    ParamTypeId = table.Column<short>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ActionTypeId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ActionTypeParams", x => x.ParamTypeId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ActionTypes",
-                columns: table => new
-                {
-                    ActionTypeId = table.Column<short>(type: "INTEGER", nullable: false)
+                    StateTypeId = table.Column<short>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActionTypes", x => x.ActionTypeId);
+                    table.PrimaryKey("PK_StateTypes", x => x.StateTypeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,6 +36,27 @@ namespace Welsh.Framebot.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StateParams",
+                columns: table => new
+                {
+                    ParamId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    StateTypeId = table.Column<short>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    ParamType = table.Column<byte>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StateParams", x => x.ParamId);
+                    table.ForeignKey(
+                        name: "FK_StateParams_StateTypes_StateTypeId",
+                        column: x => x.StateTypeId,
+                        principalTable: "StateTypes",
+                        principalColumn: "StateTypeId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,7 +105,11 @@ namespace Welsh.Framebot.Data.Migrations
                     StateId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     BotId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    NextStateId = table.Column<int>(type: "INTEGER", nullable: true),
+                    StateTypeId = table.Column<short>(type: "INTEGER", nullable: false),
+                    EnterMessage = table.Column<string>(type: "TEXT", nullable: true),
+                    ExitMessage = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -109,64 +120,36 @@ namespace Welsh.Framebot.Data.Migrations
                         principalTable: "Bots",
                         principalColumn: "BotId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_States_StateTypes_StateTypeId",
+                        column: x => x.StateTypeId,
+                        principalTable: "StateTypes",
+                        principalColumn: "StateTypeId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "StateActions",
+                name: "StateParamValues",
                 columns: table => new
                 {
-                    ActionId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
                     StateId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ActionTypeId = table.Column<short>(type: "INTEGER", nullable: false),
-                    NextActionId = table.Column<int>(type: "INTEGER", nullable: true),
-                    NextState = table.Column<int>(type: "INTEGER", nullable: true)
+                    ParamId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Value = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StateActions", x => x.ActionId);
+                    table.PrimaryKey("PK_StateParamValues", x => new { x.StateId, x.ParamId });
                     table.ForeignKey(
-                        name: "FK_StateActions_ActionTypes_ActionTypeId",
-                        column: x => x.ActionTypeId,
-                        principalTable: "ActionTypes",
-                        principalColumn: "ActionTypeId",
+                        name: "FK_StateParamValues_StateParams_ParamId",
+                        column: x => x.ParamId,
+                        principalTable: "StateParams",
+                        principalColumn: "ParamId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StateActions_States_StateId",
+                        name: "FK_StateParamValues_States_StateId",
                         column: x => x.StateId,
                         principalTable: "States",
                         principalColumn: "StateId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StateActionParams",
-                columns: table => new
-                {
-                    ActionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ParamTypeId = table.Column<short>(type: "INTEGER", nullable: false),
-                    Value = table.Column<string>(type: "TEXT", nullable: false),
-                    BotActionTypeActionTypeId = table.Column<short>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StateActionParams", x => new { x.ActionId, x.ParamTypeId });
-                    table.ForeignKey(
-                        name: "FK_StateActionParams_ActionTypeParams_ParamTypeId",
-                        column: x => x.ParamTypeId,
-                        principalTable: "ActionTypeParams",
-                        principalColumn: "ParamTypeId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StateActionParams_ActionTypes_BotActionTypeActionTypeId",
-                        column: x => x.BotActionTypeActionTypeId,
-                        principalTable: "ActionTypes",
-                        principalColumn: "ActionTypeId");
-                    table.ForeignKey(
-                        name: "FK_StateActionParams_StateActions_ActionId",
-                        column: x => x.ActionId,
-                        principalTable: "StateActions",
-                        principalColumn: "ActionId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -176,29 +159,24 @@ namespace Welsh.Framebot.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StateActionParams_BotActionTypeActionTypeId",
-                table: "StateActionParams",
-                column: "BotActionTypeActionTypeId");
+                name: "IX_StateParams_StateTypeId",
+                table: "StateParams",
+                column: "StateTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StateActionParams_ParamTypeId",
-                table: "StateActionParams",
-                column: "ParamTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StateActions_ActionTypeId",
-                table: "StateActions",
-                column: "ActionTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StateActions_StateId",
-                table: "StateActions",
-                column: "StateId");
+                name: "IX_StateParamValues_ParamId",
+                table: "StateParamValues",
+                column: "ParamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_States_BotId",
                 table: "States",
                 column: "BotId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_States_StateTypeId",
+                table: "States",
+                column: "StateTypeId");
         }
 
         /// <inheritdoc />
@@ -208,22 +186,19 @@ namespace Welsh.Framebot.Data.Migrations
                 name: "BotChannels");
 
             migrationBuilder.DropTable(
-                name: "StateActionParams");
+                name: "StateParamValues");
 
             migrationBuilder.DropTable(
-                name: "ActionTypeParams");
-
-            migrationBuilder.DropTable(
-                name: "StateActions");
-
-            migrationBuilder.DropTable(
-                name: "ActionTypes");
+                name: "StateParams");
 
             migrationBuilder.DropTable(
                 name: "States");
 
             migrationBuilder.DropTable(
                 name: "Bots");
+
+            migrationBuilder.DropTable(
+                name: "StateTypes");
 
             migrationBuilder.DropTable(
                 name: "Users");

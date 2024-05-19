@@ -11,7 +11,7 @@ using Welsh.Framebot.Data;
 namespace Welsh.Framebot.Data.Migrations
 {
     [DbContext(typeof(FramebotContext))]
-    [Migration("20240519093720_Init")]
+    [Migration("20240519214717_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -40,39 +40,6 @@ namespace Welsh.Framebot.Data.Migrations
                     b.ToTable("Bots");
                 });
 
-            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotActionType", b =>
-                {
-                    b.Property<short>("ActionTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ActionTypeId");
-
-                    b.ToTable("ActionTypes");
-                });
-
-            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotActionTypeParam", b =>
-                {
-                    b.Property<short>("ParamTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ActionTypeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ParamTypeId");
-
-                    b.ToTable("ActionTypeParams");
-                });
-
             modelBuilder.Entity("Welsh.Framebot.Data.Models.BotChannel", b =>
                 {
                     b.Property<int>("BotId")
@@ -99,66 +66,86 @@ namespace Welsh.Framebot.Data.Migrations
                     b.Property<int>("BotId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("EnterMessage")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ExitMessage")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("NextStateId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<short>("StateTypeId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("StateId");
 
                     b.HasIndex("BotId");
 
+                    b.HasIndex("StateTypeId");
+
                     b.ToTable("States");
                 });
 
-            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateAction", b =>
+            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateParam", b =>
                 {
-                    b.Property<int>("ActionId")
+                    b.Property<int>("ParamId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<short>("ActionTypeId")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("ParamType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("NextActionId")
+                    b.Property<short>("StateTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("NextState")
-                        .HasColumnType("INTEGER");
+                    b.HasKey("ParamId");
 
+                    b.HasIndex("StateTypeId");
+
+                    b.ToTable("StateParams");
+                });
+
+            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateParamValue", b =>
+                {
                     b.Property<int>("StateId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ActionId");
-
-                    b.HasIndex("ActionTypeId");
-
-                    b.HasIndex("StateId");
-
-                    b.ToTable("StateActions");
-                });
-
-            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateActionParam", b =>
-                {
-                    b.Property<int>("ActionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<short>("ParamTypeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<short?>("BotActionTypeActionTypeId")
+                    b.Property<int>("ParamId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ActionId", "ParamTypeId");
+                    b.HasKey("StateId", "ParamId");
 
-                    b.HasIndex("BotActionTypeActionTypeId");
+                    b.HasIndex("ParamId");
 
-                    b.HasIndex("ParamTypeId");
+                    b.ToTable("StateParamValues");
+                });
 
-                    b.ToTable("StateActionParams");
+            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateType", b =>
+                {
+                    b.Property<short>("StateTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("StateTypeId");
+
+                    b.ToTable("StateTypes");
                 });
 
             modelBuilder.Entity("Welsh.Framebot.Data.Models.User", b =>
@@ -214,49 +201,45 @@ namespace Welsh.Framebot.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Welsh.Framebot.Data.Models.BotStateType", "StateType")
+                        .WithMany("States")
+                        .HasForeignKey("StateTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Bot");
+
+                    b.Navigation("StateType");
                 });
 
-            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateAction", b =>
+            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateParam", b =>
                 {
-                    b.HasOne("Welsh.Framebot.Data.Models.BotActionType", "ActionType")
-                        .WithMany("Actions")
-                        .HasForeignKey("ActionTypeId")
+                    b.HasOne("Welsh.Framebot.Data.Models.BotStateType", "StateType")
+                        .WithMany("StateParams")
+                        .HasForeignKey("StateTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StateType");
+                });
+
+            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateParamValue", b =>
+                {
+                    b.HasOne("Welsh.Framebot.Data.Models.BotStateParam", "StateParam")
+                        .WithMany()
+                        .HasForeignKey("ParamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Welsh.Framebot.Data.Models.BotState", "State")
-                        .WithMany("Actions")
+                        .WithMany("StateParamValues")
                         .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ActionType");
-
                     b.Navigation("State");
-                });
 
-            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateActionParam", b =>
-                {
-                    b.HasOne("Welsh.Framebot.Data.Models.BotStateAction", "Action")
-                        .WithMany("Params")
-                        .HasForeignKey("ActionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Welsh.Framebot.Data.Models.BotActionType", null)
-                        .WithMany("Params")
-                        .HasForeignKey("BotActionTypeActionTypeId");
-
-                    b.HasOne("Welsh.Framebot.Data.Models.BotActionTypeParam", "Param")
-                        .WithMany()
-                        .HasForeignKey("ParamTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Action");
-
-                    b.Navigation("Param");
+                    b.Navigation("StateParam");
                 });
 
             modelBuilder.Entity("Welsh.Framebot.Data.Models.Bot", b =>
@@ -266,21 +249,16 @@ namespace Welsh.Framebot.Data.Migrations
                     b.Navigation("States");
                 });
 
-            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotActionType", b =>
-                {
-                    b.Navigation("Actions");
-
-                    b.Navigation("Params");
-                });
-
             modelBuilder.Entity("Welsh.Framebot.Data.Models.BotState", b =>
                 {
-                    b.Navigation("Actions");
+                    b.Navigation("StateParamValues");
                 });
 
-            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateAction", b =>
+            modelBuilder.Entity("Welsh.Framebot.Data.Models.BotStateType", b =>
                 {
-                    b.Navigation("Params");
+                    b.Navigation("StateParams");
+
+                    b.Navigation("States");
                 });
 
             modelBuilder.Entity("Welsh.Framebot.Data.Models.User", b =>
